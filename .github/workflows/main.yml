@@ -128,7 +128,7 @@ jobs:
           name: tfplan
           path: terraform/tfplan
       - name: tf plan
-        run: echo plan success
+        run: echo plan success!!
 
   # -------------------------------------------------------------------------
   # 3. Bicep what-if — preview of changes for the ARM/Bicep path
