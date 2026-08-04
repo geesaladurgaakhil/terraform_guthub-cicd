@@ -145,6 +145,11 @@ resource "azurerm_linux_virtual_machine" "main" {
     username = var.admin_username
     password = var.password
   }
+  os_profile {
+    computer_name  = "hostname"
+    admin_username = var.admin_ssh_key
+    admin_password = var.password
+  }
 
   os_disk {
     caching              = "ReadWrite"
