@@ -142,7 +142,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   disable_password_authentication = false
 
   admin_ssh_key {
-    username   = var.admin_username
+    username = var.admin_username
     password = var.password
   }
 
