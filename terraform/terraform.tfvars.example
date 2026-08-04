@@ -9,7 +9,4 @@ tags = {
   Project     = "webapp-migration"
 }
 
-admin_username          = "azureadmin"
-admin_password                = "Welcome@123"
-vm_size                 = "Standard_B2s"
 allowed_ssh_source_cidr = "203.0.113.10/32"
