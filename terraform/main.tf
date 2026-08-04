@@ -148,7 +148,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   os_profile {
     computer_name  = "hostname"
     admin_username = var.admin_ssh_key
-    admin_password = var.password
+    admin_password = var.admin_password
   }
 
   os_disk {
