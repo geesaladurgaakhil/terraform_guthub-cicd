@@ -6,7 +6,7 @@ on:
     paths:
       - "terraform/**"
       - "bicep/**"
-      - ".github/workflows/infra-ci-cd.yml"
+      - ".github/workflows/main.yml"
   pull_request:
     branches: [main]
     paths:
@@ -118,7 +118,7 @@ jobs:
             -var="environment=${{ github.event.inputs.environment || 'dev' }}" \
             -var="tags={\"Environment\":\"dev\",\"Owner\":\"platform-team\",\"CostCenter\":\"CC-1023\",\"Project\":\"webapp\"}" \
             -var="allowed_ssh_source_cidr=${{ secrets.ALLOWED_SSH_CIDR }}" \
-            -out=tfplan
+            -out=tfplan   
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
