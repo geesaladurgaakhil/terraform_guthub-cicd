@@ -35,7 +35,7 @@ resource "azurerm_storage_account" "main" {
   min_tls_version                   = "TLS1_2"
   https_traffic_only_enabled        = true
   allow_nested_items_to_be_public   = false # no anonymous/public blob access
-  public_network_access_enabled     = false # set false + private endpoint for prod-hardened setups
+  public_network_access_enabled     = true # set false + private endpoint for prod-hardened setups
   shared_access_key_enabled         = false
   infrastructure_encryption_enabled = true
 
