@@ -141,10 +141,6 @@ resource "azurerm_linux_virtual_machine" "main" {
   # --- Security guardrail: password auth disabled, SSH key required ---
   disable_password_authentication = false
 
-  admin_ssh_key {
-    username = var.admin_username
-    password = var.password
-  }
   os_profile {
     computer_name  = "hostname"
     admin_username = var.admin_ssh_key
