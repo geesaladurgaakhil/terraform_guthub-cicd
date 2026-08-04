@@ -59,12 +59,12 @@ variable "tags" {
 #   description = "VM SKU. Kept small/cheap by default; override per environment."
 # }
 
-# variable "allowed_ssh_source_cidr" {
-#   type        = string
-#   description = "CIDR allowed to reach SSH (22). Never use 0.0.0.0/0 in prod (enforced below)."
+variable "allowed_ssh_source_cidr" {
+  type        = string
+  description = "CIDR allowed to reach SSH (22). Never use 0.0.0.0/0 in prod (enforced below)."
 
-#   validation {
-#     condition     = var.allowed_ssh_source_cidr != "0.0.0.0/0"
-#     error_message = "allowed_ssh_source_cidr must not be 0.0.0.0/0 — restrict to a known IP/CIDR."
-#   }
-# }
+  validation {
+    condition     = var.allowed_ssh_source_cidr != "0.0.0.0/0"
+    error_message = "allowed_ssh_source_cidr must not be 0.0.0.0/0 — restrict to a known IP/CIDR."
+  }
+}
