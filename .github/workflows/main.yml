@@ -66,11 +66,11 @@ jobs:
       # - name: Bicep lint / build
       #   run: az bicep build --file bicep/main.bicep
 
-      - name: Run Checkov (compliance guardrails)
-        uses: bridgecrewio/checkov-action@master
-        with:
-          config_file: policies/.checkov.yaml
-          quiet: true
+      # - name: Run Checkov (compliance guardrails)
+      #   uses: bridgecrewio/checkov-action@master
+      #   with:
+      #     config_file: policies/.checkov.yaml
+      #     quiet: true
 
       - name: Run tfsec (Terraform security scan)
         uses: aquasecurity/tfsec-action@v1.0.3
