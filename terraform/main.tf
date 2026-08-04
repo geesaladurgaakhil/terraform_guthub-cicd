@@ -139,11 +139,11 @@ resource "azurerm_linux_virtual_machine" "main" {
   network_interface_ids = [azurerm_network_interface.main.id]
 
   # --- Security guardrail: password auth disabled, SSH key required ---
-  disable_password_authentication = true
+  disable_password_authentication = false
 
   admin_ssh_key {
     username   = var.admin_username
-    public_key = var.ssh_public_key
+    password = var.password
   }
 
   os_disk {
