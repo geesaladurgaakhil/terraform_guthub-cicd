@@ -10,6 +10,6 @@ tags = {
 }
 
 admin_username          = "azureadmin"
-ssh_public_key          = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDttuKPoOr85H+OZHkotFvYSepoKdE3T+HB/6cDW3cVZqHN7vBrGkjmz3wvZmWBbjRO7pE9YuZssjB7FQQUOKx1ZhB2dEamkvEe5ecsiRHIgSZEP6MlYAdt4d4zbqD5DJ9xgnFkXjJ5KHYP3F9IThzAbvbC4gH85L5NsvSPeLxF5gmE2K9DFog69I6vWktlQVXrZ+zjFIdds53RILxl1vT1gADMpZDwQ4cBHAbHNhnotBpZW7+9E3TxCfu8PP5Ib6URs7NFBcaw97gt3AzHosXQugEKvcf7f1kTA/c671/tBBctgvqDBB6qEwNwckoWsYUkg/xY0h8ZFRpJhVQz9Ppyivh79M+o7D21EX/ckgdkFTNJnaT451vKtY+0XrJHxaaHxqvOUs/V4dNhmgCbiteoaX4dHJqbHbsgy9pHJCA8VHmNCcUsqBP1ajr18t+nBy10aVEgg9QBsES/Sv/rC7pk6EmHQcQrPoCZtxUZt/Vvt3mD8H0us7/yZrzdgLaKyFM= Admin@DESKTOP-VBTO6BF"
+password                = "Welcome@123"
 vm_size                 = "Standard_B2s"
 allowed_ssh_source_cidr = "203.0.113.10/32"
