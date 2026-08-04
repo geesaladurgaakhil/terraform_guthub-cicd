@@ -1,0 +1,42 @@
+{
+  "properties": {
+    "displayName": "Require mandatory tags on resources",
+    "description": "Denies creation of any resource missing Environment, Owner, CostCenter, or Project tags.",
+    "mode": "Indexed",
+    "parameters": {
+      "tagNames": {
+        "type": "Array",
+        "defaultValue": ["Environment", "Owner", "CostCenter", "Project"],
+        "metadata": {
+          "displayName": "Required tag names",
+          "description": "List of tag keys that must be present."
+        }
+      }
+    },
+    "policyRule": {
+      "if": {
+        "anyOf": [
+          {
+            "field": "tags['Environment']",
+            "exists": "false"
+          },
+          {
+            "field": "tags['Owner']",
+            "exists": "false"
+          },
+          {
+            "field": "tags['CostCenter']",
+            "exists": "false"
+          },
+          {
+            "field": "tags['Project']",
+            "exists": "false"
+          }
+        ]
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  }
+}

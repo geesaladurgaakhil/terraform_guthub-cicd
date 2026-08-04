@@ -1,0 +1,13 @@
+# Checkov config — static compliance scanning for Terraform + Bicep/ARM.
+# Run with: checkov --config-file policies/.checkov.yaml
+directory:
+  - terraform
+  - bicep
+framework:
+  - terraform
+  - bicep
+compact: true
+quiet: false
+# Fail the pipeline on MEDIUM severity and above.
+soft-fail: false
+skip-check: []

@@ -1,0 +1,4 @@
+# tfsec configuration (also consumable by `trivy config`).
+# Run with: tfsec terraform --config-file policies/tfsec.yml
+minimum_severity: MEDIUM
+exclude: []

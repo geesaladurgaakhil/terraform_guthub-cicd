@@ -1,0 +1,8 @@
+{
+  "comment": "Example: assign both custom policies to a subscription using az cli. See README for the full command. This file documents the shape only — it is not deployed directly by Terraform/Bicep in this repo.",
+  "properties": {
+    "policyDefinitionId": "/subscriptions/<sub-id>/providers/Microsoft.Authorization/policyDefinitions/require-mandatory-tags",
+    "displayName": "Enforce mandatory tags org-wide",
+    "enforcementMode": "Default"
+  }
+}

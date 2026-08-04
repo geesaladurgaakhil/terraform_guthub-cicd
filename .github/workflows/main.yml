@@ -3,7 +3,24 @@ name: Infra Provisioning (Terraform + Bicep)
 on:
   push:
     branches: [main]
+    paths:
+      - "terraform/**"
+      - "bicep/**"
+      - ".github/workflows/infra-ci-cd.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "terraform/**"
+      - "bicep/**"
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        default: "dev"
+        type: choice
+        options: [dev, test, prod]
+
 permissions:
   id-token: write   # required for OIDC login to Azure — no client secrets stored
   contents: read
@@ -17,8 +34,56 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
 jobs:
-  azlogin:
-    name: azure login
+  # -------------------------------------------------------------------------
+  # 1. Static compliance & security scanning — runs on every push/PR
+  # -------------------------------------------------------------------------
+  lint-and-scan:
+    name: Lint, Validate & Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform fmt check
+        working-directory: terraform
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init (no backend, validate only)
+        working-directory: terraform
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        working-directory: terraform
+        run: terraform validate
+
+      # - name: Install Bicep CLI
+      #   run: az bicep install
+
+      # - name: Bicep lint / build
+      #   run: az bicep build --file bicep/main.bicep
+
+      - name: Run Checkov (compliance guardrails)
+        uses: bridgecrewio/checkov-action@master
+        with:
+          config_file: policies/.checkov.yaml
+          quiet: true
+
+      - name: Run tfsec (Terraform security scan)
+        uses: aquasecurity/tfsec-action@v1.0.3
+        with:
+          working_directory: terraform
+          config_file: policies/tfsec.yml
+
+  # -------------------------------------------------------------------------
+  # 2. Terraform plan — produces an artifact reviewers can inspect
+  # -------------------------------------------------------------------------
+  terraform-plan:
+    name: Terraform Plan
+    needs: lint-and-scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,5 +94,112 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      - name: azlist
-        run: az group list
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform init
+        working-directory: terraform
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ secrets.TFSTATE_RG }}" \
+            -backend-config="storage_account_name=${{ secrets.TFSTATE_SA }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=infra-automation.tfstate"
+
+      - name: Terraform plan
+        working-directory: terraform
+        run: |
+          terraform plan \
+            -var="project_name=webapp" \
+            -var="environment=${{ github.event.inputs.environment || 'dev' }}" \
+            -var="tags={\"Environment\":\"dev\",\"Owner\":\"platform-team\",\"CostCenter\":\"CC-1023\",\"Project\":\"webapp\"}" \
+            -var="ssh_public_key=${{ secrets.VM_SSH_PUBLIC_KEY }}" \
+            -var="allowed_ssh_source_cidr=${{ secrets.ALLOWED_SSH_CIDR }}" \
+            -out=tfplan
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: terraform/tfplan
+
+  # -------------------------------------------------------------------------
+  # 3. Bicep what-if — preview of changes for the ARM/Bicep path
+  # -------------------------------------------------------------------------
+  # bicep-whatif:
+  #   name: Bicep What-If
+  #   needs: lint-and-scan
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Azure Login (OIDC)
+  #       uses: azure/login@v2
+  #       with:
+  #         client-id: ${{ secrets.AZURE_CLIENT_ID }}
+  #         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+  #         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+  #     - name: Ensure resource group exists
+  #       run: |
+  #         az group create \
+  #           --name rg-webapp-dev \
+  #           --location centralindia \
+  #           --tags Environment=dev Owner=platform-team CostCenter=CC-1023 Project=webapp
+
+  #     - name: What-if deployment
+  #       run: |
+  #         az deployment group what-if \
+  #           --resource-group rg-webapp-dev \
+  #           --template-file bicep/main.bicep \
+  #           --parameters projectName=webapp environment=dev \
+  #             ownerTag=platform-team costCenterTag=CC-1023 \
+  #             sshPublicKey='${{ secrets.VM_SSH_PUBLIC_KEY }}' \
+  #             allowedSshSourceCidr='${{ secrets.ALLOWED_SSH_CIDR }}'
+
+  # -------------------------------------------------------------------------
+  # 4. Apply — gated behind a protected GitHub Environment (manual approval)
+  # -------------------------------------------------------------------------
+  apply:
+    name: Terraform Apply
+    needs: [terraform-plan]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: ${{ github.event.inputs.environment || 'dev' }}   # configure required reviewers on this Environment in repo settings
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Terraform init
+        working-directory: terraform
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=${{ secrets.TFSTATE_RG }}" \
+            -backend-config="storage_account_name=${{ secrets.TFSTATE_SA }}" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=infra-automation.tfstate"
+
+      - name: Download plan artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: terraform
+
+      - name: Terraform apply
+        working-directory: terraform
+        run: terraform apply -auto-approve tfplan
