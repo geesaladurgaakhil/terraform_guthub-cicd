@@ -72,6 +72,7 @@ jobs:
       #     config_file: policies/.checkov.yaml
       #     quiet: true
 
+
       - name: Run tfsec (Terraform security scan)
         uses: aquasecurity/tfsec-action@v1.0.3
         with:
