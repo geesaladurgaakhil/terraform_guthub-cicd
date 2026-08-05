@@ -118,7 +118,7 @@ jobs:
           terraform plan \
             -var="project_name=webapp" \
             -var="environment=${{ github.event.inputs.environment || 'dev' }}" \
-            -var="tags={\"Environment\":\"dev\",\"Owner\":\"platform-team\",\"CostCenter\":\"CC-1023\",\"Project\":\"webapp\"}" \
+            # -var="tags={\"Environment\":\"dev\",\"Owner\":\"platform-team\",\"CostCenter\":\"CC-1023\",\"Project\":\"webapp\"}" \
             -var="allowed_ssh_source_cidr=${{ secrets.ALLOWED_SSH_CIDR }}" \
             -out=tfplan   
 
