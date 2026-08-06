@@ -40,7 +40,7 @@ jobs:
       - name: Terraform Init (no backend, validate/plan only)
         id: init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -backend=false
+        run: terraform init
 
       - name: Terraform Validate
         id: validate
