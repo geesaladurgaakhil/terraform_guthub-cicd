@@ -18,7 +18,7 @@ jobs:
   terraform-apply:
     name: Checkout, Init, Plan, Apply
     runs-on: ubuntu-latest
-    environment: production   # optional: gives you a manual-approval gate in GitHub
+    environment: dev   # optional: gives you a manual-approval gate in GitHub
 
     steps:
       - name: Checkout Code
