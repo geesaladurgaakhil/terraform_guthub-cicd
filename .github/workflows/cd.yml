@@ -2,9 +2,9 @@ name: Terraform CD
 
 on:
   push:
-    branches: [ main ]
-    paths:
-      - 'environments/**'
+    # branches: [ main ]
+    # paths:
+    #   - 'environments/**'
   workflow_dispatch:
 
 permissions:
