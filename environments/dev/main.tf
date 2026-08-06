@@ -4,7 +4,7 @@ resource "azurerm_resource_group" "this" {
 
   tags = merge(var.tags, {
     environment = var.environment
-    managed_by  = "terraform"
+    managed_by  = "terraformak"
   })
 }
 
