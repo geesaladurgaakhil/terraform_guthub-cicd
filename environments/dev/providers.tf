@@ -21,7 +21,7 @@ terraform {
   # For your very first local practice run, you can comment this whole
   # "backend" block out and Terraform will just use a local terraform.tfstate
   # file instead.
-  backend "azurerm" {}
+  # backend "azurerm" {}
 }
 
 provider "azurerm" {
