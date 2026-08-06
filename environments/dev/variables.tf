@@ -27,11 +27,11 @@ variable "account_replication_type" {
   default     = "LRS"
 }
 
-# variable "container_name" {
-#   description = "Name of the blob container to create"
-#   type        = string
-#   default     = "data"
-# }
+variable "container_name" {
+  description = "Name of the blob container to create"
+  type        = string
+  default     = "data"
+}
 
 variable "environment" {
   description = "Environment tag"
