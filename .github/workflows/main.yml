@@ -41,7 +41,7 @@ jobs:
     name: Lint, Validate & Security Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -89,7 +89,7 @@ jobs:
     environment:
       name: "dev"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -175,7 +175,7 @@ jobs:
     environment:
       name: ${{ github.event.inputs.environment || 'dev' }}   # configure required reviewers on this Environment in repo settings
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
